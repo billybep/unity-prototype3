@@ -5,27 +5,31 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody rbPlayer;
+    private Animator animPlayer;
 
-    public float jumpForce = 5;
+    public float jumpForce = 10;
     public float gravityModifier;
     public bool isOnGround = true;
-    public bool gameOver = false;
+    public bool gameOver;
 
     // Start is called before the first frame update
     void Start()
     {
         rbPlayer = GetComponent<Rigidbody>();
         Physics.gravity *= gravityModifier;
+
+        animPlayer = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isOnGround)
+        if (Input.GetKeyDown(KeyCode.Space) && isOnGround && !gameOver)
         {
             // ForceMode.Impulse parameter to the AddForce call, then reduce force multiplier value
             rbPlayer.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isOnGround = false;
+            animPlayer.SetTrigger("Jump_trig");
         }
     }
 
@@ -39,6 +43,8 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Game Over!");
             gameOver = true;
+            animPlayer.SetBool("Death_b", true);
+            animPlayer.SetInteger("DeathType_int", 1);
         }
     }
 }
